@@ -14,6 +14,7 @@ int main()
 	// create an empty structure (null)
 	json j;
 	LineObj newline;
+	newline.objectType = 1;
 	newline.makeStart(12, 34, 2);
 	newline.makeEnd(56, 78, 0, 0);
 	cout << "newline ptBeg=" << newline.ptBeg.x << ", " << newline.ptBeg.y << endl;
@@ -33,6 +34,7 @@ int main()
 	outfile.open("afile.dat");
 	cout << "Writing to the file" << endl;
 	outfile << j << endl;
+	outfile.close();
 
 	// open a file in read mode.
 	ifstream infile;
@@ -52,11 +54,57 @@ int main()
 		cout << "\nj2 is LineObj!\n";
 		LineObj line2;
 		line2.makeStart(j2["ptBeg"][0], j2["ptBeg"][1], j2["color"]);
-		newline.makeEnd(j2["ptEnd"][0], j2["ptEnd"][1], 0, 0);
+		line2.makeEnd(j2["ptEnd"][0], j2["ptEnd"][1], 0, 0);
 		cout << "\nline2 ptBeg=" << line2.ptBeg.x << ", " << line2.ptBeg.y << endl;
 		cout << "line2 ptEnd=" << line2.ptEnd.x << ", " << line2.ptEnd.y << endl;
 		cout << "line2 color=" << line2.color << endl;
 	}
+
+	LineObj line3;
+	line3.objectType = 1;
+	line3.makeStart(90, 1112, 3);
+	line3.makeEnd(1314, 1516, 0, 0);
+
+	RectangularObj rect1;
+	rect1.objectType = 2;
+	rect1.makeStart(87, 87, 4);
+	rect1.makeEnd(95, 27, 0, 0);
+
+	list<DrawObj*> DrawObjList;
+	DrawObjList.push_back(new LineObj(newline));
+	DrawObjList.push_back(new LineObj(line3));
+	DrawObjList.push_back(new RectangularObj(rect1));
+
+	//put each object to json
+	json j3;
+	for (auto& it : DrawObjList)  //Draw each object in DrawObjList
+	{
+		json jit;
+		jit["objectType"] = it->objectType;
+		jit["ptBeg"] = { it->ptBeg.x, it->ptBeg.y };
+		jit["ptEnd"] = { it->ptEnd.x, it->ptEnd.y };
+		jit["color"] = it->color;
+		//cout << "iterator: type=" << it->objectType << " ptbeg=(" << it->ptBeg.x << ", " << it->ptBeg.x << ") color=" << it->color << endl;
+		cout << "jit = " << jit << endl;
+		j3.push_back(jit);
+	}
+	//cout << j3[2] << endl;
+	//write to file
+	outfile.open("mylist.json");
+	cout << "\nWriting to the file" << endl;
+	outfile << j3 << endl;
+
+	//read from file
+	json j4;
+	infile.open("mylist.json");
+	cout << "\nReading from the file" << endl;
+	infile >> j4;
+	cout << j4 << endl;
+	infile.close();
+
+	if (j3 == j4)
+		cout << "j3 == j4 !\n";
+
 	return 0;
 }
 

@@ -84,6 +84,14 @@ int main()
 		jit["ptBeg"] = { it->ptBeg.x, it->ptBeg.y };
 		jit["ptEnd"] = { it->ptEnd.x, it->ptEnd.y };
 		jit["color"] = it->color;
+		
+		/*//test a list
+		list<string> ls;//{ "aaa", "bbb", "", "ccc"};
+		ls.push_back("aaa");
+		ls.push_back("aaa");
+		ls.push_back("");
+		jit["text"] = ls;*/
+
 		//cout << "iterator: type=" << it->objectType << " ptbeg=(" << it->ptBeg.x << ", " << it->ptBeg.x << ") color=" << it->color << endl;
 		cout << "jit = " << jit << endl;
 		j3.push_back(jit);
@@ -102,9 +110,24 @@ int main()
 	cout << j4 << endl;
 	infile.close();
 
-	if (j3 == j4)
-		cout << "j3 == j4 !\n";
+	/*if (j3 == j4)
+		cout << "j3 == j4 !\n";*/
+
+	cout << "size of j4 is " << j4.size()<<endl;
+	int i = 0;
+	for (json::iterator it = j4.begin(); it != j4.end(); ++it)
+	{
+		cout << endl << *it << '\n';
+		LineObj L2;
+		L2.makeStart(it[i]["ptBeg"][0], it[i]["ptBeg"][1], it[i]["color"]);
+		L2.makeEnd(it[i]["ptEnd"][0], it[i]["ptEnd"][1], 0, 0);
+		cout << "L2 ptBeg=" << L2.ptBeg.x << ", " << L2.ptBeg.y << endl;
+		cout << "L2 ptEnd=" << L2.ptEnd.x << ", " << L2.ptEnd.y << endl;
+		cout << "L2 color=" << L2.color << endl;
+		i++;
+	}
 
 	return 0;
 }
+
 
